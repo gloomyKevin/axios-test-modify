@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body>
+    <script>
+
+        axios.interceptors.request.use(function(config) {
+            console.log('请求拦截成功')
+            // return config
+            throw '参数出现问题'
+        }, function(error) {
+            console.log('请求拦截失败')
+            return Promise.reject(error)
+        })
+
+        axios.interceptors.response.use(function(response) {
+            console.log('响应拦截成功')
+            return response
+        }, function(error) {
+            console.log('响应拦截失败')
+            return Promise.reject(error)
+        })
+        axios({
+            url: 'http://localhost:3000/posts'
+        }).then(response => {
+            console.log(response)
+        }).catch(reason => {
+            console.log('自定义回调失败')
+        })
+    </script>
+</body>
+</html>
