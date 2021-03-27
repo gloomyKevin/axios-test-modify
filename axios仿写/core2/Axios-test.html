@@ -32,26 +32,32 @@
         // context为实例化对象
         let context = new Axios(config)
         // instance为函数
-        // let instance = Axios.prototype.request.bind(context)
+        let instance = Axios.prototype.request.bind(context)
 
-        // Object.keys(Axios.prototype).forEach(key => {
-        //     instance[key] = Axios.prototype[key].bind(context)
-        // })
-        // console.dir(instance)
+        Object.keys(Axios.prototype).forEach(key => {
+            instance[key] = Axios.prototype[key].bind(context)
+        })
+        console.dir(instance)
 
-        // Object.keys(context).forEach(key => {
-        //     instance[key] = context[key]
-        // })
-        // console.dir(instance)
+        Object.keys(context).forEach(key => {
+            instance[key] = context[key]
+        })
+        console.dir(instance)
 
-        // return instance
+        return instance
         return context
     }
 
     let axios = createInstance()
-    // axios({method: 'GET'})
+    axios({method: 'GET'})
     axios.get({})
     axios.post({})
+
+    function extend(a, b, thisArg) {
+        Object.keys(b).forEach(key => {
+            a[key] = b[key]
+        })
+    }
     </script>
 </body>
 </html>
