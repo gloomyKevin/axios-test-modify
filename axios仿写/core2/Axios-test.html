@@ -8,13 +8,13 @@
 </head>
 <body>
     <script>
-        function Axios(config) {
+    function Axios(config) {
         this.default = config
         this.interceptors = {
-            request: {},
-            response: {}
+                request: {},
+                response: {}
+            }
         }
-    }
 
     Axios.prototype.request = function(config) {
         console.log('发送AJAX请求, method is:' + config.method)
@@ -32,21 +32,24 @@
         // context为实例化对象
         let context = new Axios(config)
         // instance为函数
-        let instance = Axios.prototype.request.bind(context)
+        // let instance = Axios.prototype.request.bind(context)
 
-        Object.keys(Axios.prototype).forEach(key => {
-            instance[key] = Axios.prototype[key].bind(context)
-        })
-        
-        Object.keys(context).forEach(key => {
-            instance[key] = context[key]
-        })
-        console.dir(instance)
-        return instance
+        // Object.keys(Axios.prototype).forEach(key => {
+        //     instance[key] = Axios.prototype[key].bind(context)
+        // })
+        // console.dir(instance)
+
+        // Object.keys(context).forEach(key => {
+        //     instance[key] = context[key]
+        // })
+        // console.dir(instance)
+
+        // return instance
+        return context
     }
 
     let axios = createInstance()
-    axios({method: 'GET'})
+    // axios({method: 'GET'})
     axios.get({})
     axios.post({})
     </script>
