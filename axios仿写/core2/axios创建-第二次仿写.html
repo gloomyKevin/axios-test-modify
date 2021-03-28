@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function Axios(cfg) {
+            // this.default = cfg.default
+            this.interceptors = {
+                request: {},
+                response: {}
+            }
+        }
+
+        Axios.prototype.request = function(cfg) {
+            console.log('发送请求的方式为: ' + cfg.method)
+        }
+
+        Axios.prototype.get = function(cfg) {
+            return Axios.prototype.request({method: 'GET'})
+        }
+
+        Axios.prototype.post = function(cfg) {
+            return Axios.prototype.request({method: 'POST'})
+        }
+
+        function createInstance(cfg) {
+            // ctx为Axios构造函数实例
+            let ctx = new Axios(cfg)
+            // 创建instance函数，本质调用的是request
+            // 调试bug记录
+            // let instance = Axios.prototype.request(cfg).bind(ctx) 和 let instance = Axios.prototype.request.bind(ctx)
+            // 本质：对this和bind理解不到位
+            let instance = Axios.prototype.request.bind(ctx)
+
+            // 将Axios实例及原型方法挂载到空函数instance上
+            // 这里的forEach还能不能加第二个参数优化
+            // Object.keys(Axios.prototype).forEach(key => {
+            //     instance[key] = Axios.prototype[key].bind(ctx)
+            // })
+            this.extend(instance, Axios.prototype, ctx)
+
+            // 记住绑定规则：函数加bind，属性不加bind
+            // 后续根据这条规则抽离extend函数
+            // Object.keys(ctx).forEach(key => {
+            //     instance[key] = ctx[key]
+            // })
+            this.extend(instance, ctx)
+
+            return instance
+        }
+
+        let axios = createInstance({})
+        axios({
+            method: 'GET'
+        })
+
+        axios.get({})
+        axios.post({})
+
+        // 抽象出extend方法
+        function extend(a, b, thisArg) {
+            Object.keys(b).forEach(key => {
+                if(thisArg && typeof b[key] === 'function') {
+                    a[key] = b[key].bind(thisArg)
+                } else {
+                    a[key] = b[key]
+                }
+            })
+ 
+        }
+    </script>
+</body>
+</html>
