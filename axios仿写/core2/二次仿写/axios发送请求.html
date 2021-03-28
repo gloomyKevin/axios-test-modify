@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function Axios(cfg) {
+            this.default = cfg
+        }
+
+        Axios.prototype.request = function(cfg) {
+            let promise = Promise.resolve(cfg)
+            let chain = [dispatchRequest, undefined]
+            let result = promise.then(chain[0], chain[1])
+            return result
+        }
+
+        function dispatchRequest(cfg) {
+            return xhrAdapter(cfg).then(response =>{
+                // console.log(response)
+                return response
+            }, error => {
+                console.log(error)
+            })        
+        }
+
+        //TODO 将XMLHttpRequest替换为fetch
+        function xhrAdapter(cfg) {
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest()
+                xhr.open(cfg.method, cfg.url)
+                xhr.send()
+
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === 4){
+                        if(xhr.status >= 200 && xhr.status < 300) {
+                            resolve({
+                                // 配置对象
+                                config: cfg,
+                                // 响应体
+                                data: xhr.response,
+                                // 响应头
+                                header: xhr.getAllResponseHeaders(),
+                                // xhr请求对象
+                                request: xhr,
+                                // 响应状态码
+                                status: xhr.status,
+                                // 响应状态字符串
+                                statusText: xhr.statusText
+                            })
+                        } else {
+                            reject(new Error('请求失败，失败的错误码为: ' + xhr.status))
+                        }
+                    } 
+                }
+            })
+        }
+        // request后面是否应该写括号，以及括号内是否应该有参数
+        let axios = Axios.prototype.request.bind(null)
+        axios({
+            url: 'http://localhost:3000/posts',
+            method: 'GET'
+        }).then(response => {
+            console.log(response)
+        })
+    </script>
+</body>
+</html>

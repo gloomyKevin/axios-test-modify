@@ -9,7 +9,7 @@
 <body>
     <script>
         function Axios(cfg) {
-            // this.default = cfg.default
+            this.default = config
             this.interceptors = {
                 request: {},
                 response: {}
@@ -28,6 +28,7 @@
             return Axios.prototype.request({method: 'POST'})
         }
 
+        //TODO 抽象出bind方法
         function createInstance(cfg) {
             // ctx为Axios构造函数实例
             let ctx = new Axios(cfg)
